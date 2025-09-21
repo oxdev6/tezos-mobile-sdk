@@ -7,6 +7,7 @@ let package = Package(
     name: "TezosMobileSDK",
     platforms: [
         .iOS(.v14),
+        .macOS(.v12),
     ],
     products: [
         .library(

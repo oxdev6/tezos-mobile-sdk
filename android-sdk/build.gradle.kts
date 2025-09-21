@@ -42,6 +42,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.20")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.moshi:moshi:1.15.1")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation("org.bouncycastle:bcprov-jdk15to18:1.78.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")

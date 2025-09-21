@@ -2,6 +2,8 @@ package io.tezos.mobile.rpc
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class TezosRpcClient(
     private val baseUrl: String,
@@ -24,6 +26,20 @@ class TezosRpcClient(
         val request = Request.Builder()
             .url("$baseUrl/chains/main/blocks/head/context/contracts/$address/balance")
             .get()
+            .build()
+        httpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw Exception("HTTP ${response.code}")
+            return response.body?.string()?.trim('"', '\n', ' ', '\r') ?: throw Exception("Empty body")
+        }
+    }
+
+    @Throws(Exception::class)
+    fun injectOperation(signedOperationHex: String): String {
+        val json = "\"$signedOperationHex\""
+        val body = json.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url("$baseUrl/injection/operation?chain=main")
+            .post(body)
             .build()
         httpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw Exception("HTTP ${response.code}")
