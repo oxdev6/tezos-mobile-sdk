@@ -65,6 +65,84 @@ class OperationService(private val rpc: TezosRpcClient) {
         )
         return sendTez(branch, transfer, privateKey)
     }
+
+    // FA1.2 token transfer: parameters = { entrypoint: "transfer", value: Pair(from, Pair(to, amount)) }
+    private fun buildFA12Parameters(from: String, to: String, amount: String): Map<String, Any> = mapOf(
+        "entrypoint" to "transfer",
+        "value" to mapOf(
+            "prim" to "Pair",
+            "args" to listOf(
+                mapOf("string" to from),
+                mapOf(
+                    "prim" to "Pair",
+                    "args" to listOf(
+                        mapOf("string" to to),
+                        mapOf("int" to amount)
+                    )
+                )
+            )
+        )
+    )
+
+    private fun forgeTransactionRaw(
+        branch: String,
+        source: String,
+        destination: String,
+        fee: String,
+        counter: String,
+        gasLimit: String,
+        storageLimit: String,
+        amount: String,
+        parameters: Map<String, Any>?
+    ): String {
+        val content = mutableMapOf<String, Any>(
+            "kind" to "transaction",
+            "source" to source,
+            "fee" to fee,
+            "counter" to counter,
+            "gas_limit" to gasLimit,
+            "storage_limit" to storageLimit,
+            "amount" to amount,
+            "destination" to destination
+        )
+        if (parameters != null) content["parameters"] = parameters
+        val root = mapOf(
+            "branch" to branch,
+            "contents" to listOf(content)
+        )
+        val json = moshi.adapter(Map::class.java).toJson(root)
+        return rpc.postRawString("/chains/main/blocks/head/helpers/forge/operations", json)
+    }
+
+    fun sendFA12Transfer(
+        source: String,
+        contract: String,
+        from: String,
+        to: String,
+        amount: String,
+        feeMutez: String = "15000",
+        gasLimit: String = "20000",
+        storageLimit: String = "300",
+        privateKey: Ed25519PrivateKeyParameters
+    ): String {
+        val branch = rpc.getHeadHash()
+        val counterStr = rpc.getCounter(source)
+        val nextCounter = (counterStr.toLongOrNull() ?: 0L) + 1
+        val params = buildFA12Parameters(from, to, amount)
+        val forgedHex = forgeTransactionRaw(
+            branch,
+            source,
+            contract,
+            feeMutez,
+            nextCounter.toString(),
+            gasLimit,
+            storageLimit,
+            "0",
+            params
+        )
+        val signedHex = signForgedAppendSignature(forgedHex, privateKey)
+        return rpc.injectOperation(signedHex)
+    }
 }
 
 

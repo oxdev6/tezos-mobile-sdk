@@ -1,0 +1,8 @@
+# SwiftPM builds
+**/.build/
+
+# Android/Gradle
+**/.gradle/
+**/build/
+**/.idea/
+local.properties
