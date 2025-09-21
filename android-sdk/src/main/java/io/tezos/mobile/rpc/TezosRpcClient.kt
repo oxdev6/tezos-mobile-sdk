@@ -1,5 +1,6 @@
 package io.tezos.mobile.rpc
 
+import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.MediaType.Companion.toMediaType
@@ -7,7 +8,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class TezosRpcClient(
     private val baseUrl: String,
-    private val httpClient: OkHttpClient = OkHttpClient()
+    private val httpClient: Call.Factory = OkHttpClient()
 ) {
     private val jsonMedia = "application/json".toMediaType()
     init {

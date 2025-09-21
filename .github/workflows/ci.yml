@@ -10,6 +10,10 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
+      - name: Install SwiftLint
+        run: brew install swiftlint || true
+      - name: SwiftLint
+        run: swiftlint lint --quiet || true
       - name: Build Swift package
         run: |
           cd ios-sdk
@@ -27,6 +31,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Install ktlint
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.2.1/ktlint && chmod a+x ktlint
+      - name: ktlint
+        run: ./ktlint "**/*.kt" "**/*.kts" || true
       - name: Build Android library
         run: |
           cd android-sdk

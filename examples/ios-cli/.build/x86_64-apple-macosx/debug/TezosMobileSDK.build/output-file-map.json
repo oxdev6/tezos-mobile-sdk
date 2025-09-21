@@ -73,5 +73,11 @@
     "object": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Hex.swift.o",
     "swiftmodule": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Hex~partial.swiftmodule",
     "swift-dependencies": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Hex.swiftdeps"
+  },
+  "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/ios-sdk/Sources/TezosMobileSDK/Version.swift": {
+    "dependencies": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Version.d",
+    "object": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Version.swift.o",
+    "swiftmodule": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Version~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/Version.swiftdeps"
   }
 }

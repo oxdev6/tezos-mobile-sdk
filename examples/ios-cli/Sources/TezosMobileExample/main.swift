@@ -9,6 +9,19 @@ struct Main {
         do {
             let head = try await rpc.getHeadHash()
             print("Head: \(head)")
+
+            let pairing = BeaconPairingRequest(
+                id: UUID().uuidString,
+                type: "p2p-pairing-request",
+                name: "TezosMobileExample",
+                version: "3",
+                publicKey: "PUBLIC_KEY_PLACEHOLDER",
+                relayServer: nil,
+                icon: nil
+            )
+            if let deeplink = try? BeaconDeepLinkBuilder.pairingURL(for: "temple://", request: pairing) {
+                print("Pairing URL: \(deeplink)")
+            }
         } catch {
             print("Error: \(error)")
         }
