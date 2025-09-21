@@ -8,6 +8,7 @@ object Codec {
     private val pairingAdapter = moshi.adapter(BeaconPairingRequest::class.java)
     private val permReqAdapter = moshi.adapter(PermissionRequest::class.java)
     private val opReqAdapter = moshi.adapter(OperationRequest::class.java)
+    private val signReqAdapter = moshi.adapter(SignPayloadRequest::class.java)
 
     fun encodePairingRequest(req: BeaconPairingRequest): String {
         val json = pairingAdapter.toJson(req)
@@ -42,6 +43,18 @@ object Codec {
         return try {
             val json = String(Base64.decode(base64, Base64.NO_WRAP))
             opReqAdapter.fromJson(json)
+        } catch (e: Exception) { null }
+    }
+
+    fun encodeSignPayloadRequest(req: SignPayloadRequest): String {
+        val json = signReqAdapter.toJson(req)
+        return Base64.encodeToString(json.toByteArray(), Base64.NO_WRAP)
+    }
+
+    fun decodeSignPayloadRequest(base64: String): SignPayloadRequest? {
+        return try {
+            val json = String(Base64.decode(base64, Base64.NO_WRAP))
+            signReqAdapter.fromJson(json)
         } catch (e: Exception) { null }
     }
 }

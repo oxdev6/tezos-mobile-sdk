@@ -133,6 +133,71 @@ public final class OperationService {
         let signedHex = try OperationSigner.signOperationAndAppendSignature(forgedHex: forgedHex, privateKey: privateKey)
         return try await rpc.injectOperation(signedOperationHex: signedHex)
     }
+
+    // MARK: - FA2 Token Transfer
+
+    private func buildFA2Parameters(from: String, to: String, tokenId: String, amount: String) -> [String: Any] {
+        // transfer: [ { from_: from, txs: [ { to_: to, token_id: tokenId, amount } ] } ]
+        return [
+            "entrypoint": "transfer",
+            "value": [
+                [
+                    "prim": "Pair",
+                    "args": [
+                        ["string": from],
+                        [
+                            "list": [
+                                [
+                                    "prim": "Pair",
+                                    "args": [
+                                        ["string": to],
+                                        [
+                                            "prim": "Pair",
+                                            "args": [
+                                                ["int": tokenId],
+                                                ["int": amount]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    }
+
+    public func sendFA2Transfer(
+        source: String,
+        contract: String,
+        from: String,
+        to: String,
+        tokenId: String,
+        amount: String,
+        feeMutez: String = "18000",
+        gasLimit: String = "25000",
+        storageLimit: String = "350",
+        privateKey: Curve25519.Signing.PrivateKey
+    ) async throws -> String {
+        let branch = try await rpc.getHeadHash()
+        let counterStr = try await rpc.getCounter(address: source)
+        let nextCounter = (UInt64(counterStr) ?? 0) + 1
+        let params = buildFA2Parameters(from: from, to: to, tokenId: tokenId, amount: amount)
+        let forgedHex = try await forgeTransactionRaw(
+            branch: branch,
+            source: source,
+            destination: contract,
+            fee: feeMutez,
+            counter: String(nextCounter),
+            gasLimit: gasLimit,
+            storageLimit: storageLimit,
+            amount: "0",
+            parameters: params
+        )
+        let signedHex = try OperationSigner.signOperationAndAppendSignature(forgedHex: forgedHex, privateKey: privateKey)
+        return try await rpc.injectOperation(signedOperationHex: signedHex)
+    }
 }
 
 

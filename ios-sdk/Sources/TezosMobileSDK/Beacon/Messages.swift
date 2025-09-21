@@ -41,4 +41,17 @@ public struct OperationResponse: Codable {
     public let transactionHash: String
 }
 
+public struct SignPayloadRequest: Codable {
+    public let id: String
+    public let type: String // sign_payload_request
+    public let signingType: String // e.g., "raw" or "micheline"
+    public let payload: String // hex or micheline JSON depending on signingType
+}
+
+public struct SignPayloadResponse: Codable {
+    public let id: String
+    public let type: String // sign_payload_response
+    public let signature: String
+}
+
 

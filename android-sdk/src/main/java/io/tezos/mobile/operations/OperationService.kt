@@ -143,6 +143,67 @@ class OperationService(private val rpc: TezosRpcClient) {
         val signedHex = signForgedAppendSignature(forgedHex, privateKey)
         return rpc.injectOperation(signedHex)
     }
+
+    // FA2 transfer helper
+    private fun buildFA2Parameters(from: String, to: String, tokenId: String, amount: String): Map<String, Any> = mapOf(
+        "entrypoint" to "transfer",
+        "value" to listOf(
+            mapOf(
+                "prim" to "Pair",
+                "args" to listOf(
+                    mapOf("string" to from),
+                    mapOf(
+                        "list" to listOf(
+                            mapOf(
+                                "prim" to "Pair",
+                                "args" to listOf(
+                                    mapOf("string" to to),
+                                    mapOf(
+                                        "prim" to "Pair",
+                                        "args" to listOf(
+                                            mapOf("int" to tokenId),
+                                            mapOf("int" to amount)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+
+    fun sendFA2Transfer(
+        source: String,
+        contract: String,
+        from: String,
+        to: String,
+        tokenId: String,
+        amount: String,
+        feeMutez: String = "18000",
+        gasLimit: String = "25000",
+        storageLimit: String = "350",
+        privateKey: Ed25519PrivateKeyParameters
+    ): String {
+        val branch = rpc.getHeadHash()
+        val counterStr = rpc.getCounter(source)
+        val nextCounter = (counterStr.toLongOrNull() ?: 0L) + 1
+        val params = buildFA2Parameters(from, to, tokenId, amount)
+        val forgedHex = forgeTransactionRaw(
+            branch,
+            source,
+            contract,
+            feeMutez,
+            nextCounter.toString(),
+            gasLimit,
+            storageLimit,
+            "0",
+            params
+        )
+        val signedHex = signForgedAppendSignature(forgedHex, privateKey)
+        return rpc.injectOperation(signedHex)
+    }
 }
 
 

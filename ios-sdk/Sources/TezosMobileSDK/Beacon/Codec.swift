@@ -30,6 +30,16 @@ public enum BeaconCodec {
         guard let data = Data(base64Encoded: base64) else { throw URLError(.cannotDecodeContentData) }
         return try JSONDecoder().decode(OperationRequest.self, from: data)
     }
+
+    public static func encodeSignPayloadRequest(_ req: SignPayloadRequest) throws -> String {
+        let data = try JSONEncoder().encode(req)
+        return data.base64EncodedString()
+    }
+
+    public static func decodeSignPayloadRequest(_ base64: String) throws -> SignPayloadRequest {
+        guard let data = Data(base64Encoded: base64) else { throw URLError(.cannotDecodeContentData) }
+        return try JSONDecoder().decode(SignPayloadRequest.self, from: data)
+    }
 }
 
 

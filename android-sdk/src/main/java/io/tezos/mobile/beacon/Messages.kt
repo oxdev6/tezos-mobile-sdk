@@ -38,4 +38,17 @@ data class OperationResponse(
     val transactionHash: String
 )
 
+data class SignPayloadRequest(
+    val id: String,
+    val type: String,
+    val signingType: String,
+    val payload: String
+)
+
+data class SignPayloadResponse(
+    val id: String,
+    val type: String,
+    val signature: String
+)
+
 
