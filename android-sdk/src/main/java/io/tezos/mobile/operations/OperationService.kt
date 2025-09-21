@@ -235,6 +235,63 @@ class OperationService(private val rpc: TezosRpcClient) {
         val json = moshi.adapter(Map::class.java).toJson(root)
         return rpc.postRawString("/chains/main/blocks/head/context/contracts/$contract/single_run_view", json)
     }
+
+    data class FA2Tx(val to: String, val tokenId: String, val amount: String)
+
+    fun buildFA2BatchParameters(from: String, txs: List<FA2Tx>): Map<String, Any> {
+        val txList = txs.map { tx ->
+            mapOf(
+                "prim" to "Pair",
+                "args" to listOf(
+                    mapOf("string" to tx.to),
+                    mapOf(
+                        "prim" to "Pair",
+                        "args" to listOf(
+                            mapOf("int" to tx.tokenId),
+                            mapOf("int" to tx.amount)
+                        )
+                    )
+                )
+            )
+        }
+        return mapOf(
+            "entrypoint" to "transfer",
+            "value" to listOf(
+                mapOf(
+                    "prim" to "Pair",
+                    "args" to listOf(
+                        mapOf("string" to from),
+                        mapOf("list" to txList)
+                    )
+                )
+            )
+        )
+    }
+
+    fun getFA2Balances(contract: String, pairs: List<Pair<String, String>>, viewName: String = "balance_of"): String {
+        val list = pairs.map { p ->
+            mapOf(
+                "prim" to "Pair",
+                "args" to listOf(
+                    mapOf("string" to p.first),
+                    mapOf("int" to p.second)
+                )
+            )
+        }
+        val root = mapOf(
+            "view" to viewName,
+            "input" to mapOf(
+                "prim" to "Pair",
+                "args" to listOf(
+                    mapOf("list" to list),
+                    mapOf("prim" to "Unit")
+                )
+            ),
+            "chain_id" to rpc.getChainId()
+        )
+        val json = moshi.adapter(Map::class.java).toJson(root)
+        return rpc.postRawString("/chains/main/blocks/head/context/contracts/$contract/single_run_view", json)
+    }
 }
 
 

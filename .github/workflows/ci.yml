@@ -17,11 +17,18 @@ jobs:
       - name: Build Swift package
         run: |
           cd ios-sdk
-          swift build
+          swift build --verbose 2>&1 | tee build.log
       - name: Run Swift tests
         run: |
           cd ios-sdk
-          swift test
+          swift test --verbose 2>&1 | tee test.log
+      - name: Upload iOS build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-logs
+          path: |
+            ios-sdk/build.log
+            ios-sdk/test.log
   android:
     runs-on: ubuntu-latest
     steps:
@@ -39,8 +46,15 @@ jobs:
       - name: Build Android library
         run: |
           cd android-sdk
-          ./gradlew :assembleDebug --no-daemon
+          ./gradlew :assembleDebug --no-daemon 2>&1 | tee build.log
       - name: Run Android unit tests
         run: |
           cd android-sdk
-          ./gradlew :testDebugUnitTest --no-daemon
+          ./gradlew :testDebugUnitTest --no-daemon 2>&1 | tee test.log
+      - name: Upload Android build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-logs
+          path: |
+            android-sdk/build.log
+            android-sdk/test.log

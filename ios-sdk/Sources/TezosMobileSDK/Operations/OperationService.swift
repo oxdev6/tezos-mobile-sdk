@@ -233,6 +233,75 @@ public final class OperationService {
         let result = try await rpc.postRawString(path: path, body: data)
         return result
     }
+
+    // Batch helpers
+    public struct FA2Tx {
+        public let to: String
+        public let tokenId: String
+        public let amount: String
+        public init(to: String, tokenId: String, amount: String) {
+            self.to = to; self.tokenId = tokenId; self.amount = amount
+        }
+    }
+
+    public func buildFA2BatchParameters(from source: String, txs: [FA2Tx]) -> [String: Any] {
+        let txList: [[String: Any]] = txs.map { tx in
+            [
+                "prim": "Pair",
+                "args": [
+                    ["string": tx.to],
+                    [
+                        "prim": "Pair",
+                        "args": [
+                            ["int": tx.tokenId],
+                            ["int": tx.amount]
+                        ]
+                    ]
+                ]
+            ]
+        }
+        return [
+            "entrypoint": "transfer",
+            "value": [
+                [
+                    "prim": "Pair",
+                    "args": [
+                        ["string": source],
+                        ["list": txList]
+                    ]
+                ]
+            ]
+        ]
+    }
+
+    public func getFA2Balances(
+        contract: String,
+        pairs: [(owner: String, tokenId: String)],
+        viewName: String = "balance_of"
+    ) async throws -> String {
+        let list: [[String: Any]] = pairs.map { pair in
+            [
+                "prim": "Pair",
+                "args": [
+                    ["string": pair.owner],
+                    ["int": pair.tokenId]
+                ]
+            ]
+        }
+        let body: [String: Any] = [
+            "view": viewName,
+            "input": [
+                "prim": "Pair",
+                "args": [
+                    ["list": list],
+                    ["prim": "Unit"]
+                ]
+            ],
+            "chain_id": try await rpc.getChainId()
+        ]
+        let data = try JSONSerialization.data(withJSONObject: body, options: [])
+        return try await rpc.postRawString(path: "/chains/main/blocks/head/context/contracts/\(contract)/single_run_view", body: data)
+    }
 }
 
 
