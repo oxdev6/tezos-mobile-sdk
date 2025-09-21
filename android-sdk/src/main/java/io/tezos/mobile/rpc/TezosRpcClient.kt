@@ -10,6 +10,9 @@ class TezosRpcClient(
     private val httpClient: OkHttpClient = OkHttpClient()
 ) {
     private val jsonMedia = "application/json".toMediaType()
+    init {
+        require(baseUrl.lowercase().startsWith("https://")) { "TezosRpcClient requires an HTTPS baseUrl" }
+    }
     @Throws(Exception::class)
     fun getHeadHash(): String {
         val request = Request.Builder()

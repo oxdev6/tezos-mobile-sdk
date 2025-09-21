@@ -22,6 +22,7 @@ public final class TezosRPCClient {
     private let config: TezosRPCConfig
 
     public init(config: TezosRPCConfig) {
+        precondition(config.baseURL.scheme?.lowercased() == "https", "TezosRPCClient requires an HTTPS baseURL")
         self.config = config
     }
 
