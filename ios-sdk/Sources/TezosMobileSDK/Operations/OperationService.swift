@@ -12,6 +12,17 @@ public final class OperationService {
         let data = try JSONEncoder().encode(request)
         return try await rpc.postRawString(path: "/chains/main/blocks/head/helpers/forge/operations", body: data)
     }
+
+    public func sendTez(
+        branch: String,
+        transfer: TezTransfer,
+        privateKey: Curve25519.Signing.PrivateKey
+    ) async throws -> String {
+        let forgeReq = ForgeOperationsRequest(branch: branch, contents: [.transaction(transfer)])
+        let forgedHex = try await forgeOperations(forgeReq)
+        let signedHex = try OperationSigner.signOperationAndAppendSignature(forgedHex: forgedHex, privateKey: privateKey)
+        return try await rpc.injectOperation(signedOperationHex: signedHex)
+    }
 }
 
 
