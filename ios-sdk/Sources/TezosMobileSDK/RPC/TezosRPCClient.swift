@@ -35,6 +35,11 @@ public final class TezosRPCClient {
         return try await getRawString(path: path)
     }
 
+    public func getCounter(address: String) async throws -> String {
+        let path = "/chains/main/blocks/head/context/contracts/\(address)/counter"
+        return try await getRawString(path: path)
+    }
+
     private func makeRequest(path: String) throws -> URLRequest {
         let url = config.baseURL.appendingPathComponent(path)
         var request = URLRequest(url: url)

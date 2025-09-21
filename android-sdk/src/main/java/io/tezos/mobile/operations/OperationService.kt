@@ -41,6 +41,30 @@ class OperationService(private val rpc: TezosRpcClient) {
         val signedHex = signForgedAppendSignature(forgedHex, privateKey)
         return rpc.injectOperation(signedHex)
     }
+
+    fun autoSendTez(
+        source: String,
+        destination: String,
+        amountMutez: String,
+        feeMutez: String = "10000",
+        gasLimit: String = "10300",
+        storageLimit: String = "300",
+        privateKey: Ed25519PrivateKeyParameters
+    ): String {
+        val branch = rpc.getHeadHash()
+        val counterStr = rpc.getCounter(source)
+        val nextCounter = (counterStr.toLongOrNull() ?: 0L) + 1
+        val transfer = TezTransfer(
+            source = source,
+            destination = destination,
+            amount = amountMutez,
+            fee = feeMutez,
+            counter = nextCounter.toString(),
+            gasLimit = gasLimit,
+            storageLimit = storageLimit
+        )
+        return sendTez(branch, transfer, privateKey)
+    }
 }
 
 

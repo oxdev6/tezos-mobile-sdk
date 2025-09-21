@@ -35,6 +35,18 @@ class TezosRpcClient(
     }
 
     @Throws(Exception::class)
+    fun getCounter(address: String): String {
+        val request = Request.Builder()
+            .url("$baseUrl/chains/main/blocks/head/context/contracts/$address/counter")
+            .get()
+            .build()
+        httpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw Exception("HTTP ${response.code}")
+            return response.body?.string()?.trim('"', '\n', ' ', '\r') ?: throw Exception("Empty body")
+        }
+    }
+
+    @Throws(Exception::class)
     fun postRawString(path: String, jsonBody: String): String {
         val body = jsonBody.toRequestBody(jsonMedia)
         val request = Request.Builder()
