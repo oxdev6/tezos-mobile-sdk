@@ -71,6 +71,24 @@ public final class TezosRPCClient {
         }
     }
 
+    public func postRawString(path: String, body: Data) async throws -> String {
+        let request = try makePostRequest(path: path, body: body)
+        do {
+            let (data, response) = try await config.urlSession.data(for: request)
+            guard let http = response as? HTTPURLResponse else { throw TezosRPCError.invalidResponse }
+            guard (200..<300).contains(http.statusCode) else {
+                let body = String(data: data, encoding: .utf8)
+                throw TezosRPCError.httpError(statusCode: http.statusCode, body: body)
+            }
+            guard let value = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) else {
+                throw TezosRPCError.invalidResponse
+            }
+            return value.replacingOccurrences(of: "\"", with: "")
+        } catch {
+            throw TezosRPCError.networkError(underlying: error)
+        }
+    }
+
     public func getRawString(path: String) async throws -> String {
         let request = try makeRequest(path: path)
         do {
