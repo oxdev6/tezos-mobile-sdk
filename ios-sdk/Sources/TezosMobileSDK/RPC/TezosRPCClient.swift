@@ -36,6 +36,11 @@ public final class TezosRPCClient {
         return try await getRawString(path: path)
     }
 
+    public func getChainId() async throws -> String {
+        let path = "/chains/main/chain_id"
+        return try await getRawString(path: path)
+    }
+
     public func getCounter(address: String) async throws -> String {
         let path = "/chains/main/blocks/head/context/contracts/\(address)/counter"
         return try await getRawString(path: path)

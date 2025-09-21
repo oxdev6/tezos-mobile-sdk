@@ -22,6 +22,11 @@ struct Main {
             if let deeplink = try? BeaconDeepLinkBuilder.pairingURL(for: "temple://", request: pairing) {
                 print("Pairing URL: \(deeplink)")
             }
+
+            let signReq = SignPayloadRequest(id: UUID().uuidString, type: "sign_payload_request", signingType: "raw", payload: "0xdeadbeef")
+            let encoded = try BeaconCodec.encodeSignPayloadRequest(signReq)
+            let decoded = try BeaconCodec.decodeSignPayloadRequest(encoded)
+            print("SignPayload decoded type: \(decoded.type)")
         } catch {
             print("Error: \(error)")
         }

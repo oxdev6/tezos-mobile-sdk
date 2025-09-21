@@ -204,6 +204,37 @@ class OperationService(private val rpc: TezosRpcClient) {
         val signedHex = signForgedAppendSignature(forgedHex, privateKey)
         return rpc.injectOperation(signedHex)
     }
+
+    fun getFA2Balance(
+        contract: String,
+        viewName: String = "balance_of",
+        owner: String,
+        tokenId: String
+    ): String {
+        val root = mapOf(
+            "view" to viewName,
+            "input" to mapOf(
+                "prim" to "Pair",
+                "args" to listOf(
+                    mapOf(
+                        "list" to listOf(
+                            mapOf(
+                                "prim" to "Pair",
+                                "args" to listOf(
+                                    mapOf("string" to owner),
+                                    mapOf("int" to tokenId)
+                                )
+                            )
+                        )
+                    ),
+                    mapOf("unit" to null)
+                )
+            ),
+            "chain_id" to rpc.getChainId()
+        )
+        val json = moshi.adapter(Map::class.java).toJson(root)
+        return rpc.postRawString("/chains/main/blocks/head/context/contracts/$contract/single_run_view", json)
+    }
 }
 
 

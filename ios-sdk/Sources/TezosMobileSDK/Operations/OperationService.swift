@@ -198,6 +198,41 @@ public final class OperationService {
         let signedHex = try OperationSigner.signOperationAndAppendSignature(forgedHex: forgedHex, privateKey: privateKey)
         return try await rpc.injectOperation(signedOperationHex: signedHex)
     }
+
+    // MARK: - FA2 Balance using run_view
+    public func getFA2Balance(
+        contract: String,
+        viewName: String = "balance_of",
+        owner: String,
+        tokenId: String
+    ) async throws -> String {
+        // POST /chains/main/blocks/head/context/contracts/<KT1>/single_run_view
+        let path = "/chains/main/blocks/head/context/contracts/\(contract)/single_run_view"
+        let input: [String: Any] = [
+            "view": viewName,
+            "input": [
+                "prim": "Pair",
+                "args": [
+                    [
+                        "list": [
+                            [
+                                "prim": "Pair",
+                                "args": [
+                                    ["string": owner],
+                                    ["int": tokenId]
+                                ]
+                            ]
+                        ]
+                    ],
+                    ["prim": "Unit"]
+                ]
+            ],
+            "chain_id": try await rpc.getChainId()
+        ]
+        let data = try JSONSerialization.data(withJSONObject: input, options: [])
+        let result = try await rpc.postRawString(path: path, body: data)
+        return result
+    }
 }
 
 
