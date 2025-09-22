@@ -54,6 +54,12 @@ publishing {
             groupId = "io.tezos"
             artifactId = "mobile-android-sdk"
             version = "0.1.0"
+            
+            pom {
+                name.set("Tezos Mobile Android SDK")
+                description.set("Native Android SDK for Tezos blockchain integration")
+                url.set("https://github.com/oxdev6/tezos-mobile-sdk")
+            }
         }
     }
 }

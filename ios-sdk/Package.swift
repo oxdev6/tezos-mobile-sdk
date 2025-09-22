@@ -9,6 +9,7 @@ let package = Package(
         .iOS(.v14),
         .macOS(.v12),
     ],
+    // Website: https://github.com/oxdev6/tezos-mobile-sdk
     products: [
         .library(
             name: "TezosMobileSDK",
