@@ -1,4 +1,0 @@
-module TezosMobileSDK {
-    header "/Users/mac/tezos-mobile-sdks/tezos-mobile-sdks/examples/ios-cli/.build/x86_64-apple-macosx/debug/TezosMobileSDK.build/TezosMobileSDK-Swift.h"
-    requires objc
-}
