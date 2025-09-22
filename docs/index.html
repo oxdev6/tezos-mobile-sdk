@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tezos Mobile SDKs – Demo</title>
+  <meta name="description" content="Demo landing for Tezos Native Mobile SDKs (Swift & Kotlin) with Beacon integration.">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; color: #0f172a; }
+    header { padding: 48px 16px; background: linear-gradient(120deg,#0ea5e9,#22d3ee); color: white; }
+    header h1 { margin: 0 0 8px; font-size: 28px; }
+    header p { margin: 0; opacity: .95; }
+    main { padding: 24px 16px 56px; max-width: 900px; margin: 0 auto; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin: 16px 0; }
+    .row { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 16px; }
+    code, pre { background: #0b1220; color: #e5e7eb; padding: 12px; border-radius: 8px; overflow:auto; }
+    a { color: #0284c7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer { padding: 16px; font-size: 12px; color: #64748b; text-align: center; }
+  </style>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+</head>
+<body>
+  <header>
+    <h1>Tezos Mobile SDKs – Demo</h1>
+    <p>Swift (iOS) and Kotlin (Android) SDKs with Beacon (TZIP-10) integration.</p>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Quick Actions</h2>
+      <div class="row">
+        <div>
+          <h3>iOS (Swift Package)</h3>
+          <pre><code>.package(url: "https://github.com/oxdev6/tezos-mobile-sdk.git", from: "0.1.0")</code></pre>
+          <p><a href="https://github.com/oxdev6/tezos-mobile-sdk">Open GitHub Repository</a></p>
+        </div>
+        <div>
+          <h3>Android (Gradle)</h3>
+          <pre><code>implementation("io.tezos:mobile-sdk:0.1.0")</code></pre>
+          <p><a href="https://github.com/oxdev6/tezos-mobile-sdk">Open GitHub Repository</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>Fetch Head Hash (Swift)</h3>
+        <pre><code>let rpc = TezosRPCClient(config: .init(rpcURL: URL(string: "https://mainnet.tezos.marigold.dev")!))
+let head = try await rpc.getHeadHash()
+print(head)</code></pre>
+      </div>
+      <div class="card">
+        <h3>Fetch Head Hash (Kotlin)</h3>
+        <pre><code>val rpc = TezosRpcClient("https://mainnet.tezos.marigold.dev")
+val head = rpc.getHeadHash()
+println(head)</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Beacon Pairing Deep Link</h3>
+      <pre><code>tezos://?type=pairing-request&amp;payload=... (Temple/Kukai compatible)</code></pre>
+      <p>See examples for working code and integration hints.</p>
+      <p><a href="https://github.com/oxdev6/tezos-mobile-sdk/tree/main/examples">Browse Examples</a></p>
+    </div>
+
+    <div class="card">
+      <h3>Security</h3>
+      <p>HTTPS-only RPC, deterministic forging and watermarked signing.</p>
+      <p><a href="https://github.com/oxdev6/tezos-mobile-sdk/blob/main/SECURITY.md">Security Policy</a></p>
+    </div>
+  </main>
+  <footer>
+    © 2025 Tezos Mobile SDKs. Demo page.
+  </footer>
+</body>
+</html>
+

@@ -66,6 +66,7 @@ dependencies {
 ## Documentation
 
 - [API Documentation](docs/)
+- [Live Demo](docs/index.html)
 - [Security Policy](SECURITY.md)
 - [Audit Preparation](AUDIT_PREP.md)
 - [Changelog](CHANGELOG.md)
